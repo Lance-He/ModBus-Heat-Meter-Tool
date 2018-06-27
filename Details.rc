@@ -22,12 +22,12 @@ VS_VERSION_INFO VERSIONINFO
             BEGIN
                 VALUE "CompanyName", "Runa, Lance"
                 VALUE "FileDescription", "Runa MODUBUS Hotmeter"
-                VALUE "FileVersion", "1.54"
+                VALUE "FileVersion", "1.55"
                 VALUE "InternalName", "Runa MODBUS Calorimeter Tool"
                 VALUE "LegalCopyright", "Lance (C)2003-2018"
                 VALUE "OriginalFilename", "rnhotmetertestfamily_MODEBUS.exe"
                 VALUE "ProductName", "MODBUS Calorimeter Tool"
-                VALUE "ProductVersion", "1.54"
+                VALUE "ProductVersion", "1.55"
             END
         END
         BLOCK "VarFileInfo"

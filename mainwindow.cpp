@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <string>
 #include <windows.h>
+#include <QButtonGroup>
 char jx_data[1024]; //串口数据接收到的数据解析后存放位置
 unsigned short Get_Crc(char *p, int len);
 void jx_shuju(char *data,int pos,int length,double places_data);
@@ -15,6 +16,7 @@ char* substring(char* ch,int pos,int length);
 void StringToHex(QString str, QByteArray &senddata); //字符串转换为十六进制数据0-F
 char ConvertHexChar(char ch);
 int return0num(int hex);
+bool radioButton=true; //定义Modbus读取数据起始地址全局变量
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -109,6 +111,13 @@ void MainWindow::readMyCom() //读串口函数
 
 void MainWindow::on_openMyComBtn_clicked()
 {
+    QButtonGroup *bg=new QButtonGroup(this);
+
+    bg->addButton(ui->radioButton,0);//一个值为0
+    bg->addButton(ui->radioButton_2,1);//一个值为1
+
+    int sel=bg->checkedId();//取到你所选的radioButton的值
+
     QString portName = "\\\\.\\"+ui->portNameComboBox->currentText(); //获取串口名
     myCom = new Win_QextSerialPort(portName,QextSerialBase::EventDriven);
     //定义串口对象，并传递参数，在构造函数里对其进行初始化
@@ -116,6 +125,21 @@ void MainWindow::on_openMyComBtn_clicked()
      isOpenSucc=myCom ->open(QIODevice::ReadWrite); //打开串口
     if(isOpenSucc==true)
     {
+        switch(sel)
+        {
+            case 0:
+              qDebug()<<"0";
+              radioButton = false;
+              break;
+            case 1:
+               qDebug()<<"1";
+               radioButton = true;
+              break;
+            default:
+              qDebug()<<"1";
+              radioButton = true;
+            break;
+        }
         if(ui->baudRateComboBox->currentText()==tr("9600")) //根据组合框内容对串口进行设置
         myCom->setBaudRate(BAUD9600);
         else if(ui->baudRateComboBox->currentText()==tr("115200"))
@@ -173,6 +197,8 @@ void MainWindow::on_openMyComBtn_clicked()
         ui->parityComboBox->setEnabled(false);
         ui->stopBitsComboBox->setEnabled(false);
         ui->portNameComboBox->setEnabled(false);
+        ui->radioButton->setEnabled(false);
+        ui->radioButton_2->setEnabled(false);
 
         ui->revise_pushButton_3->setEnabled(true); // 修改表地址按钮不可以
         ui->oldaddr_lineEdit->setEnabled(true); // 原地址不可输入
@@ -201,6 +227,8 @@ void MainWindow::on_closeMyComBtn_clicked()
     ui->revise_pushButton_3->setEnabled(false); // 修改表地址按钮不可以
     ui->oldaddr_lineEdit->setEnabled(false); // 原地址不可输入
     ui->newaddr_lineEdit_2->setEnabled(false); // 新地址不可输入
+    ui->radioButton->setEnabled(true);
+    ui->radioButton_2->setEnabled(true);
 }
 
 void MainWindow::on_sendMsgBtn_clicked()//第一个发送按钮
@@ -226,9 +254,19 @@ void MainWindow::on_sendMsgBtn_clicked()//第一个发送按钮
                 int add_biao= str1.toInt(); //存储接收到的表地址（十进制）
                 char add_data[1024];
                 if(add_biao<16)  //将十进制存储地址转换为十六进制并加上读取
-                    sprintf(add_data,"0%x030001000C",add_biao);
+                {
+                    if(radioButton == true)
+                        sprintf(add_data,"0%x030001000C",add_biao);
+                    else
+                        sprintf(add_data,"0%x030000000C",add_biao);
+                }
                 else
-                    sprintf(add_data,"%x030001000C",add_biao);
+                {
+                    if(radioButton == true)
+                        sprintf(add_data,"%x030001000C",add_biao);
+                    else
+                        sprintf(add_data,"%x030000000C",add_biao);
+                }
                  qDebug()<<add_data; //输出指令不带CRC校验和
 
                 QString str = QString(QLatin1String(add_data));

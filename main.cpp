@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-    w.setWindowTitle("瑞纳热量表-ModBus Beta v1.54"); //修改标题
+    w.setWindowTitle("瑞纳热量表-ModBus Beta v1.55"); //修改标题
     LoginDlg dlg;
     dlg.setWindowTitle("欢迎使用"); //修改标题
  //   dlg.exec(); //弹出提示框
