@@ -57,7 +57,7 @@ void MainWindow::readMyCom() //读串口函数
         memcpy( buf , temp.toHex().data() , strlen(temp.toHex().data()));
         //qDebug()<<"数据中校验和为："<<hex<<return_data_biao(buf,54,4);
        //qDebug()<<"计算校验和为："<<hex<<CRC16(temp.data(), 27);
-        ui->textBrowser->append("Rec:"+temp.toHex());       //数据接受区域  append 输入数据添加新行  insertPlainText() 输入什么显示什么
+        ui->textBrowser->append("Rec:"+temp.toHex().toUpper());       //数据接收区域显示数据  append 输入数据添加新行  insertPlainText() 输入什么显示什么
         ui->textBrowser->append(""); //数据发送后换行
 
         ui->textBrowser->moveCursor(QTextCursor::End); //禁止移动光标
@@ -72,7 +72,6 @@ void MainWindow::readMyCom() //读串口函数
             jx_shuju(buf,14,8,1); //累计流量
             ui->textBrowser_2->insertPlainText("累计流量:"+QString(QLatin1String(jx_data))+"m³");
             ui->textBrowser_2->append(""); //数据发送后换行
-
 
             jx_shuju(buf,22,8,0.01); //瞬时热量
             ui->textBrowser_2->insertPlainText("瞬时热量:"+QString(QLatin1String(jx_data))+"KW");
@@ -103,7 +102,7 @@ void MainWindow::readMyCom() //读串口函数
 
         }
         else
-            ui->textBrowser_2->insertPlainText("CRC校验错误！");
+            ui->textBrowser_2->insertPlainText("数据异常,无法解析！");
         ui->textBrowser_2->append(""); //数据发送后换行
     }
 }
